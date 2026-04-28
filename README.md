@@ -1,27 +1,123 @@
-# Expence_Tracker
-A simple C++ based Expense Tracker project that helps users manage daily expenses efficiently.
-## Features
+#include <iostream>
+#include <fstream>
+#include <vector>
+using namespace std;
 
-* Add new expenses with date, category, amount, and notes
-* View all saved expenses
-* Store expense records in files for future access
-* Simple and user-friendly console interface
-* Helps in tracking spending habits and managing personal budget
+class Expense {
+public:
+    string date;
+    string category;
+    float amount;
+    string note;
 
-## Technologies Used
+    void input() {
+        cout << "\nEnter Date (DD-MM-YYYY): ";
+        cin >> date;
 
-* C++
-* File Handling
-* Object-Oriented Programming (OOP)
+        cout << "Enter Category (Food/Travel/Shopping/etc): ";
+        cin >> category;
 
-## Purpose
+        cout << "Enter Amount: ";
+        cin >> amount;
 
-This project is designed for beginners to understand how file handling and class-based programming work in C++. It provides a practical way to apply programming concepts to a real-life problem.
+        cin.ignore();
+        cout << "Enter Note: ";
+        getline(cin, note);
+    }
 
-## Future Improvements
+    void display() {
+        cout << "\nDate: " << date;
+        cout << "\nCategory: " << category;
+        cout << "\nAmount: Rs. " << amount;
+        cout << "\nNote: " << note << endl;
+    }
+};
 
-* Monthly expense summary
-* Expense filtering by category
-* Graphical User Interface (GUI)
-* Budget limit alerts
-* Data visualization using charts
+void addExpense() {
+    Expense e;
+    ofstream file("expenses.txt", ios::app);
+
+    e.input();
+
+    file << e.date << " "
+         << e.category << " "
+         << e.amount << " "
+         << e.note << endl;
+
+    file.close();
+
+    cout << "\nExpense Added Successfully!\n";
+}
+
+void viewExpenses() {
+    ifstream file("expenses.txt");
+
+    string date, category, note;
+    float amount;
+
+    cout << "\n===== All Expenses =====\n";
+
+    while (file >> date >> category >> amount) {
+        file.ignore();
+        getline(file, note);
+
+        cout << "\nDate: " << date;
+        cout << "\nCategory: " << category;
+        cout << "\nAmount: Rs. " << amount;
+        cout << "\nNote: " << note << endl;
+    }
+
+    file.close();
+}
+
+void totalExpense() {
+    ifstream file("expenses.txt");
+
+    string date, category, note;
+    float amount, total = 0;
+
+    while (file >> date >> category >> amount) {
+        file.ignore();
+        getline(file, note);
+        total += amount;
+    }
+
+    file.close();
+
+    cout << "\nTotal Spending: Rs. " << total << endl;
+}
+
+int main() {
+    int choice;
+
+    while (true) {
+        cout << "\n===== Expense Tracker =====\n";
+        cout << "1. Add Expense\n";
+        cout << "2. View Expenses\n";
+        cout << "3. Total Spending\n";
+        cout << "4. Exit\n";
+        cout << "Enter Choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                addExpense();
+                break;
+
+            case 2:
+                viewExpenses();
+                break;
+
+            case 3:
+                totalExpense();
+                break;
+
+            case 4:
+                cout << "\nThank You!\n";
+                return 0;
+
+            default:
+                cout << "\nInvalid Choice!\n";
+        }
+    }
+}
